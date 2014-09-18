@@ -1,15 +1,15 @@
 open Printf
 open Packet
-open OpenFlow0x01_Core
-open OpenFlow0x01
+open OpenFlow0x04_Core
+open OpenFlow0x04
 open OxShared
 
 module type OXMODULE = sig
-  val switch_connected : switchId -> OpenFlow0x01.SwitchFeatures.t -> unit
+  val switch_connected : switchId -> OpenFlow0x04.SwitchFeatures.t -> unit
   val switch_disconnected : switchId -> unit
   val packet_in : switchId -> xid -> PacketIn.t -> unit
   val barrier_reply : switchId -> xid -> unit
-  val stats_reply : switchId -> xid -> StatsReply.t -> unit
+  val port_status : switchId -> portStatus -> unit
   val cleanup : unit -> unit
 end
 
@@ -23,7 +23,7 @@ module DefaultTutorialHandlers = struct
 
   let barrier_reply _ _ = ()
 
-  let stats_reply _ _ _ = ()
+  let port_status _ _ = ()
 
   let cleanup _ = ()
 
@@ -34,7 +34,7 @@ module Make (Handlers:OXMODULE) = struct
   open Async.Std
   open Core.Std
 
-  module Controller = Async_OpenFlow.OpenFlow0x01.Controller
+  module Controller = Async_OpenFlow.OpenFlow0x04.Controller
   module Log = OxShared.Log
   module Stage = Async_OpenFlow.Stage
 
@@ -63,7 +63,7 @@ module Make (Handlers:OXMODULE) = struct
     | `Connect (c_id, feats) ->
       Controller.send ctl c_id (0l, FlowModMsg delete_all_flows) >>= fun _ ->
       Controller.send ctl c_id (1l, BarrierRequest) >>= fun _ ->
-      let sw = feats.SwitchFeatures.switch_id in
+      let sw = feats.SwitchFeatures.datapath_id in
       return (Handlers.switch_connected sw feats)
     | `Message (c_id, (xid, msg)) ->
        begin match Controller.switch_id_of_client ctl c_id with
@@ -72,7 +72,7 @@ module Make (Handlers:OXMODULE) = struct
 	    (match msg with
 	     | PacketInMsg pktIn -> Handlers.packet_in sw xid pktIn
 	     | BarrierReply -> Handlers.barrier_reply sw xid
-	     | StatsReplyMsg rep -> Handlers.stats_reply sw xid rep
+	     | PortStatusMsg rep -> Handlers.port_status sw rep
 	     | msg -> Log.info ~tags "ignored a message from %Ld" sw)
        | None -> 
 	  Log.info "client not connected\n%!";

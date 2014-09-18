@@ -1,6 +1,5 @@
 (** Launches an Ox application. *)
-open OpenFlow0x01_Core
-open OpenFlow0x01_Stats
+open OpenFlow0x04_Core
 
 (** Provides default implementations for some advanced event handlers,
     reducing clutter in simple controllers.
@@ -8,10 +7,10 @@ open OpenFlow0x01_Stats
     These event handlers simply ignore the messages they receive. *)
 module DefaultTutorialHandlers : sig
 
-  val switch_connected : switchId -> OpenFlow0x01.SwitchFeatures.t -> unit
+  val switch_connected : switchId -> OpenFlow0x04.SwitchFeatures.t -> unit
   val switch_disconnected : switchId -> unit
   val barrier_reply : switchId -> xid -> unit
-  val stats_reply : switchId -> xid -> reply -> unit
+  val port_status : switchId -> portStatus -> unit
   val cleanup : unit -> unit
 
 end
@@ -23,7 +22,7 @@ module type OXMODULE = sig
 
   (** [switch_connected sw] is a callback invoked with [sw] when a switch with
   identifer [sw] connects to the controller. *)
-  val switch_connected : switchId -> OpenFlow0x01.SwitchFeatures.t -> unit
+  val switch_connected : switchId -> OpenFlow0x04.SwitchFeatures.t -> unit
 
   (** [switch_disconnected sw] is a callback invoked with [sw] when a switch
   with identifer [sw] disconnects from the controller. *)
@@ -37,9 +36,9 @@ module type OXMODULE = sig
   transaction ID [xid] from switch [sw] arrives at the controller. *)
   val barrier_reply : switchId -> xid -> unit
 
-  (** [stats_reply sw xid rep] is a callback invoked when switch [sw] responds
-  with a reply [rep] to a statistics request with transaction ID [xid]. *)
-  val stats_reply : switchId -> xid -> reply -> unit
+  (** [port_status sw xid portStatus] is a callback invoked when switch [sw] notifies
+  a port status change [portStatus]. *)
+  val port_status : switchId -> portStatus -> unit
 
   (** [cleanup] is called when an exception stops the running of the main
   controller loop. *)

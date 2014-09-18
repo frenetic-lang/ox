@@ -1,8 +1,8 @@
 open Async.Std
 
 open Packet
-open OpenFlow0x01_Core
-open OpenFlow0x01
+open OpenFlow0x04_Core
+open OpenFlow0x04
 
 module Log = Async_OpenFlow.Log
 
