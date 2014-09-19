@@ -62,6 +62,7 @@ module Make (Handlers:OXMODULE) = struct
     match e with
     | `Connect (c_id, feats) ->
       Controller.send ctl c_id (0l, FlowModMsg delete_all_flows) >>= fun _ ->
+      Controller.send ctl c_id (0l, GroupModMsg (DeleteGroup (All, 0xfffffffcl) )) >>= fun _ ->
       Controller.send ctl c_id (1l, BarrierRequest) >>= fun _ ->
       let sw = feats.SwitchFeatures.datapath_id in
       return (Handlers.switch_connected sw feats)

@@ -16,6 +16,9 @@ let send_flow_mod sw xid flowMod =
 let send_barrier_request sw xid =
   defer (Some (sw, xid, BarrierRequest))
     
+let send_msg sw xid msg =
+  defer (Some (sw, xid, msg))
+
 (* TODO(arjun): I'm not happy about this. I want an exception to terminate
    the right swich, unless we have exceptions kill the controller. *)
 let timeout (n : float) (thk : unit -> unit) : unit = 

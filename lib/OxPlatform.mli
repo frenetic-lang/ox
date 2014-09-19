@@ -13,6 +13,8 @@ val send_flow_mod : switchId -> xid -> flowMod -> unit
     transaction ID [xid]. *)
 val send_barrier_request : switchId -> xid -> unit
 
+val send_msg : switchId -> xid -> OpenFlow0x04.Message.t -> unit
+
 (** [timeout x callback] calls the [callback] after [x] seconds
     have elapsed.
 
