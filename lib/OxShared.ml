@@ -1,8 +1,8 @@
 open Core.Std
 open Async.Std
 
-open Packet
-open OpenFlow0x01
+open Frenetic_Packet
+open Frenetic_OpenFlow0x01
 
 type to_sw = switchId * xid * Message.t
 
@@ -19,6 +19,6 @@ let munge_exns thk =
     | Ok () -> 
       ()
     | Error exn ->
-      Printf.eprintf 
-        "unhandled exception raised by a callback\n%s"
-        (Exn.to_string exn)
+       eprintf 
+         "unhandled exception raised by a callback\n%s"
+         (Exn.to_string exn)

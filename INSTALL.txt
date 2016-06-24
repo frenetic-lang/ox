@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: e4ae9e88b0cee5cb9aef1898181ef22f) *)
+(* DO NOT EDIT (digest: 35200b916d368e4d386e9e1449f146fd) *)
 
 This is the INSTALL file for the ox distribution.
 
@@ -15,8 +15,7 @@ In order to compile this package, you will need:
 * findlib
 * core
 * async
-* packet
-* openflow
+* frenetic
 
 Installing
 ==========

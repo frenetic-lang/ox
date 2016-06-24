@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: e34aa0ffc9f1beb9d8a2c71f6dc4ec01)
+# DO NOT EDIT (digest: be6f5fd087e4c9140e58480195f1c16d)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -18,8 +18,7 @@ true: annot, bin_annot
 "lib/ox.cmxs": use_ox
 <lib/*.ml{,i,y}>: pkg_async
 <lib/*.ml{,i,y}>: pkg_core
-<lib/*.ml{,i,y}>: pkg_openflow
-<lib/*.ml{,i,y}>: pkg_openflow.async
-<lib/*.ml{,i,y}>: pkg_packet
+<lib/*.ml{,i,y}>: pkg_frenetic
+<lib/*.ml{,i,y}>: pkg_frenetic.async
 <lib/*.ml{,i,y}>: pkg_threads
 # OASIS_STOP

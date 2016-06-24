@@ -1,13 +1,13 @@
 open Printf
-open Packet
-open OpenFlow0x01
+open Frenetic_Packet
+open Frenetic_OpenFlow0x01
 open OxShared
-open OpenFlow_Header
+open Frenetic_OpenFlow_Header
 
-module Controller = Async_OpenFlow0x01_Controller
+module Controller = Frenetic_OpenFlow0x01_Controller
 
 module type OXMODULE = sig
-  val switch_connected : switchId -> OpenFlow0x01.SwitchFeatures.t -> unit
+  val switch_connected : switchId -> SwitchFeatures.t -> unit
   val switch_disconnected : switchId -> unit
   val packet_in : switchId -> xid -> packetIn -> unit
   val barrier_reply : switchId -> xid -> unit
@@ -37,7 +37,7 @@ module Make (Handlers:OXMODULE) = struct
   open Core.Std
 
   let send_pkt_out ((sw, xid, msg) : switchId * xid * Message.t) : unit Deferred.t =
-    match Controller.send sw xid msg with 
+    Controller.send sw xid msg >>= function 
       | `Ok -> 
         return ()
       | `Eof -> 
@@ -48,14 +48,16 @@ module Make (Handlers:OXMODULE) = struct
     match event with
     | `Connect (sw, feats) ->
       begin 
-        match 
-          Controller.send sw 0l (FlowModMsg delete_all_flows),
-          Controller.send sw 1l BarrierRequest 
-        with 
-          | `Ok, `Ok -> 
-            return (Handlers.switch_connected sw feats)
-          | _ -> 
-            return ()
+        Controller.send sw 0l (FlowModMsg delete_all_flows) >>= function
+        | `Ok ->
+           begin Controller.send sw 1l BarrierRequest >>= function
+                 | `Ok ->
+                    return (Handlers.switch_connected sw feats)
+                 | `Eof ->
+                    return ()
+           end
+        | `Eof ->
+           return ()
       end
     | `Message (sw, hdr, msg) ->
       let xid = hdr.xid in 
