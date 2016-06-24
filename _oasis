@@ -17,9 +17,8 @@ Library ox
   BuildDepends:
     core,
     async,
-    packet,
-    openflow,
-    openflow.async,
+    frenetic,
+    frenetic.async,
     threads
   InternalModules:
     OxShared
